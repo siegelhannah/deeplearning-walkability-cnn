@@ -2,12 +2,16 @@
 CNN Prediction of Neighborhood Walkability from Satellite Imagery
 
 ## Project Overview
+Satellite image patches are labeled by walkability class (low / medium / high)
+derived from the EPA National Walkability Index. A CNN is trained to classify
+walkability from overhead aerial imagery alone, without any ground-level data.
 
+## Dataset
+The dataset is stored on Talapas at `/projects/dsci410_510/data/walkability_dataset/`.
+Set the environment variable before running the notebook:
+export WALKABILITY_DATASET_PATH=/projects/dsci410_510/data/walkability_dataset/
 
-## Data Overview
-
-
-## Methods Overview
+## Methods
 In progress
 
 ## Results
@@ -18,11 +22,20 @@ In progress
 
 ## Installation
 
+Clone the repo and install:
+
 ```bash
-pip install .
+git clone https://github.com/siegelhannah/deeplearning-walkability-cnn.git
+cd deeplearning-walkability-cnn
+pip install -e .
 ```
 
-## Package Usage
+## Usage
+```python
+import os
+from walkability.dataset.dataloader import get_data_loaders
 
+train_loader, val_loader, test_loader = get_data_loaders(
+    base_path=os.environ["WALKABILITY_DATASET_PATH"]
 )
 ```
