@@ -81,7 +81,7 @@ def get_data_loaders(base_path, name="all", batch_size=32):
         train_df = pd.read_csv(os.path.join(base_path, "train.csv"))
         train_loader = DataLoader(
             WalkabilityDataset(train_df, transform=TRAIN_TRANSFORM),
-            batch_size=batch_size, shuffle=True, num_workers=4
+            batch_size=batch_size, shuffle=True, num_workers=1
         )
     if name == "train":
         return train_loader
