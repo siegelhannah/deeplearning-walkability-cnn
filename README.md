@@ -36,6 +36,6 @@ import os
 from walkability.dataset.dataloader import get_data_loaders
 
 train_loader, val_loader, test_loader = get_data_loaders(
-    base_path=os.environ["WALKABILITY_DATASET_PATH"]
+    base_path=os.environ["/projects/dsci410_510/data/walkability_dataset/"]
 )
 ```
