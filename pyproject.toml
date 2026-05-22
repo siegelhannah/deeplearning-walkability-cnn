@@ -1,0 +1,28 @@
+# to make walkability a functioning package
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "walkability"
+version = "0.1.0"
+description = "Predicting neighborhood walkability from satellite imagery using a CNN"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "torch",
+    "torchvision",
+    "pandas",
+    "Pillow",
+    "geopandas",
+    "requests",
+    "tqdm",
+    "scikit-learn",
+    "ipykernel",
+    "jupyter",
+    "notebook",
+]
+
+[tool.setuptools.packages.find]
+include = ["walkability*"]
