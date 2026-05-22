@@ -9,7 +9,7 @@ walkability from overhead aerial imagery alone, without any ground-level data.
 ## Dataset
 The dataset is stored on Talapas at `/projects/dsci410_510/data/walkability_dataset/`.
 Set the environment variable before running the notebook:
-export WALKABILITY_DATASET_PATH=/projects/dsci410_510/data/walkability_dataset/
+`export WALKABILITY_DATASET_PATH=/projects/dsci410_510/data/walkability_dataset/`
 
 ## Methods
 In progress
