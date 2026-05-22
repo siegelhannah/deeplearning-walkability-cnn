@@ -9,7 +9,7 @@ name = "walkability"
 version = "0.1.0"
 description = "Predicting neighborhood walkability from satellite imagery using a CNN"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.8"
 dependencies = [
     "torch",
     "torchvision",
