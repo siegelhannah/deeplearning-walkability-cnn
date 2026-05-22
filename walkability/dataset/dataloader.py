@@ -5,7 +5,6 @@ from PIL import Image
 from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms
 from pathlib import Path
-from sklearn.model_selection import train_test_split
 
 # labels: string -> integer for PyTorch
 LABEL_MAP = {"low": 0, "medium": 1, "high": 2}
@@ -56,40 +55,28 @@ class WalkabilityDataset(Dataset):
         return image, label
 
 
-
-def get_data_loaders(base_path="./", name="example", batch_size=32):
+# PYTORCH DATALOADERS:
+def get_data_loaders(base_path, name="all", batch_size=32):
     """
-    Create data loaders for train, develop, and test sets.
+    Create data loaders for train, develop/validation, and test sets.
  
     Args:
-        base_path (str): Path to directory containing train.csv, develop.csv, test.csv, and an example_dataset/ subfolder
-        name (str): One of 'example', 'train', 'develop'/'validation', 'test', 'all'
-        batch_size (int): Batch size for the dataloaders
+        base_path: Path to the walkability dataset directory.
+                   On Talapas: /projects/dsci410_510/data/walkability_dataset
+                   Must contain train.csv, develop.csv, test.csv
+        name: One of 'train', 'develop', 'test', 'all'
+        batch_size: Batch size for the dataloaders
  
     Returns:
-        A single DataLoader if name is 'example', 'train', 'develop', or 'test'.
+        A single DataLoader if name is 'train', 'develop', or 'test'.
         A tuple (train_loader, val_loader, test_loader) if name is 'all'.
  
     Example usage:
-        # load all splits (typical for training)
         train_loader, val_loader, test_loader = get_data_loaders(
-            base_path="/path/to/walkability_dataset", name="all"
+            base_path="/projects/dsci410_510/data/walkability_dataset",
+            name="all"
         )
- 
-        # load a single split
-        train_loader = get_data_loaders(base_path="/path/to/walkability_dataset", name="train")
- 
-        # load example data bundled with the repo (no dataset download needed)
-        example_loader = get_data_loaders(name="example")
     """
- 
-    # example mode: loads a few sample images bundled in the repo for quick testing
-    if name == "example":
-        example_path = Path(__file__).parent / ".." / ".." / "tests" / "example_dataset"
-        df = pd.read_csv(example_path / "example.csv")
-        dataset = WalkabilityDataset(df, transform=DEFAULT_TRANSFORM)
-        return DataLoader(dataset, batch_size=batch_size, shuffle=True, num_workers=0)
- 
     if name in ["train", "all"]:
         train_df = pd.read_csv(os.path.join(base_path, "train.csv"))
         train_loader = DataLoader(
@@ -120,11 +107,17 @@ def get_data_loaders(base_path="./", name="example", batch_size=32):
     return train_loader, val_loader, test_loader
 
 
- 
+# RUN EVERYTHING: 
 if __name__ == "__main__":
-    # quick test using example data bundled with the repo
-    example_loader = get_data_loaders(name="example")
-    for images, labels in example_loader:
-        print(f"Example batch — images: {images.shape}, labels: {labels}")
+    import sys
+    # path where dataset is stored: should be hosted on /projects/dsci410_510/data/walkability_dataset
+    base_path = sys.argv[1] if len(sys.argv) > 1 else "/projects/dsci410_510/data/walkability_dataset"
+    
+    # load dataloaders:
+    train_loader, val_loader, test_loader = get_data_loaders(base_path, name="all")
+    print(f"Train batches: {len(train_loader)}")
+    print(f"Val batches:   {len(val_loader)}")
+    print(f"Test batches:  {len(test_loader)}")
+    for images, labels in train_loader:
+        print(f"Batch shape: {images.shape}, Labels: {labels[:8]}")
         break
- 
