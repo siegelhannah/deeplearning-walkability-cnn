@@ -20,9 +20,9 @@ In progress
 ## Conclusion
 In progress
 
-## Installation
+## Usage:
 
-Clone the repo and install:
+1. Clone the repo and install:
 
 ```bash
 git clone https://github.com/siegelhannah/deeplearning-walkability-cnn.git
@@ -30,12 +30,12 @@ cd deeplearning-walkability-cnn
 pip install -e .
 ```
 
-## Usage
-```python
-import os
-from walkability.dataset.dataloader import get_data_loaders
+2. Open Talapas OnDemand, navigate to the repo folder, and open notebooks/data_demo.ipynb
 
-train_loader, val_loader, test_loader = get_data_loaders(
-    base_path=os.environ["/projects/dsci410_510/data/walkability_dataset/"]
-)
-```
+3. The dataset located at / can be loaded from:
+/projects/dsci410_510/data/walkability_dataset/
+
+4. Run all cells.
+
+
+
