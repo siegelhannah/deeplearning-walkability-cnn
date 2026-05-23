@@ -30,7 +30,7 @@ cd deeplearning-walkability-cnn
 pip install -e .
 ```
 
-2. Open Talapas OnDemand, navigate to the repo folder, and open notebooks/data_demo.ipynb
+2. Open notebooks/data_demo.ipynb
 
 3. The dataset located at / can be loaded from:
 /projects/dsci410_510/data/walkability_dataset/
