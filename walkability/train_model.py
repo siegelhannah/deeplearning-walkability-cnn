@@ -1,1 +1,2 @@
-### MODEL TRAINING CODE
+### walkability class prediction training loop
+
