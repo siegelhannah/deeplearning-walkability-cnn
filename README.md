@@ -1,5 +1,5 @@
 # Deep-learning-final-project
-CNN Prediction of Neighborhood Walkability from Satellite Imagery
+CNN Prediction of Neighborhood Walkability from Satellite Imagery TEST
 
 ## Project Overview
 Satellite image patches are labeled by walkability class (low / medium / high)
