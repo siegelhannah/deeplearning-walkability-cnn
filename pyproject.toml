@@ -13,6 +13,7 @@ requires-python = ">=3.8"
 dependencies = [
     "torch",
     "torchvision",
+    "torchmetrics",
     "pandas",
     "Pillow",
     "geopandas",
@@ -22,6 +23,7 @@ dependencies = [
     "ipykernel",
     "jupyter",
     "notebook",
+    "pytorch_lightning"
 ]
 
 [tool.setuptools.packages.find]
