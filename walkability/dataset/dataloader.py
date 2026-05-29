@@ -90,7 +90,7 @@ def get_data_loaders(base_path, name="all", batch_size=32):
         val_df = pd.read_csv(os.path.join(base_path, "develop.csv"))
         val_loader = DataLoader(
             WalkabilityDataset(val_df, transform=DEFAULT_TRANSFORM),
-            batch_size=batch_size, shuffle=False, num_workers=4
+            batch_size=batch_size, shuffle=False, num_workers=1
         )
     if name in ["develop", "validation"]:
         return val_loader
@@ -99,7 +99,7 @@ def get_data_loaders(base_path, name="all", batch_size=32):
         test_df = pd.read_csv(os.path.join(base_path, "test.csv"))
         test_loader = DataLoader(
             WalkabilityDataset(test_df, transform=DEFAULT_TRANSFORM),
-            batch_size=batch_size, shuffle=False, num_workers=4
+            batch_size=batch_size, shuffle=False, num_workers=1
         )
     if name == "test":
         return test_loader
