@@ -8,12 +8,12 @@ from walkability.model.CNN_model import ImageClassifier
 def train_model(train_loader, val_loader, test_loader, num_classes=3, max_epochs=30): # TODO: max_epochs
     model = ImageClassifier(num_classes=num_classes)
 
-    early_stopping = EarlyStopping(monitor="val_loss", patience=5, mode="min")
+    early_stopping = EarlyStopping(monitor="val_loss", patience=5, mode="min") # "min" mode for loss
 
     # pytorch lightning train loop
     trainer = pl.Trainer(
         max_epochs=max_epochs,
-        accelerator="auto",
+        accelerator="auto", # automatically uses GPU if available
         devices=1,
         enable_progress_bar=True,
         enable_model_summary=True,

@@ -106,9 +106,11 @@ class ImageClassifier(pl.LightningModule):
 
         preds = torch.argmax(logits, dim=1)
         acc = self.val_accuracy(preds, y)
+
+        self.log("val_loss", loss, prog_bar=True)
         self.log("val_acc", acc, prog_bar=True)
 
-
+    
     def test_step(self, batch, batch_idx):
         x, y = batch
         logits = self(x)
