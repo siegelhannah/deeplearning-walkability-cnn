@@ -7,52 +7,79 @@ import pytorch_lightning as pl
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torchmetrics import Accuracy
+from torchmetrics import Accuracy, ConfusionMatrix
 from torchvision import models
 
 
 class ImageClassifier(pl.LightningModule):
 
     def __init__(self, num_classes=3): # 3 output classes
-        size=64
+        depth=32 # depth size based on # kernels applied
+        self.save_hyperparameters()
         super().__init__()
-        self.conv1_1 = nn.Conv2d(3, size, 3, stride=1, padding=1) # 3 RGB channels -> 64 channels (via 64 kernels), kernel size=3x3
-        self.conv1_2 = nn.Conv2d(size, size, 3, stride=1, padding=1)
 
-        self.conv2_1 = nn.Conv2d(size, size*2, 3, stride=1, padding=1) # double in size: 128 channels -> 256
-        self.conv2_2 = nn.Conv2d(size*2, size*2, 3, stride=1, padding=1)
-        
-        self.conv3 = nn.Conv2d(size*2, size*4, 3, stride=1, padding=1) # double again in size
-        
-        self.pool  = nn.MaxPool2d(2, 2) # 32->16->8
-        # After two 2x2 pools on 28x28, spatial size is 7x7
+        # input images: 224x224
+        # conv block 1
+        self.conv1_1 = nn.Conv2d(3, depth, 3, stride=1, padding='same') # 3 RGB channels -> 32 channels (via 64 kernels)
+        self.conv1_2 = nn.Conv2d(depth, depth, 3, stride=1, padding='same') # 32->32
+        self.bn1 = nn.BatchNorm2d(depth) # batch normalization after each conv layer (twice)
+        self.pool1   = nn.MaxPool2d(2, 2) # first pool: spatial size 224 -> 112
 
-        self.fc1   = nn.Linear(size*4 * 4 * 4 , size)
-        self.fc2   = nn.Linear(size, size)
-        self.fc3   = nn.Linear(size , num_classes)
+        # conv block 2
+        self.conv2_1 = nn.Conv2d(depth, depth*2, 3, stride=1, padding='same') # 32->64
+        self.conv2_2 = nn.Conv2d(depth*2, depth*2, 3, stride=1, padding=1) # 64->64
+        self.bn2 = nn.BatchNorm2d(depth*2) # batch normalization after each conv layer (twice)
+        self.pool2   = nn.MaxPool2d(2, 2) # spatial size 112 -> 56
+
+        # conv block 3
+        self.conv3_1 = nn.Conv2d(depth*2, depth*4, 3, padding='same') # 64->128
+        self.conv3_2 = nn.Conv2d(depth*4, depth*4, 3, padding='same') # 128->128
+        self.bn3 = nn.BatchNorm2d(depth*4) # batch normalization after each conv layer (twice)
+        self.pool3   = nn.MaxPool2d(2, 2) # spatial size 56->28
+        
+        # collapse spatial dims to fixed size before FC layers
+        self.adaptive_pool = nn.AdaptiveAvgPool2d((4, 4)) # 28 -> 4x4
+
+        # FC layers: 128 * 4 * 4 = 2048 -> 256 -> 3
+        self.fc1 = nn.Linear(depth * 4 * 4 * 4, 256)
+        self.fc2 = nn.Linear(256, num_classes) # 256->10
+        # DROPOUT to prevent overfitting (too high = inflated validation loss)
+        self.dropout = nn.Dropout(0.3) # TODO: tune?
+
+
+        # METRICS
+        self.train_accuracy = Accuracy(task="multiclass", num_classes=num_classes)
+        self.val_accuracy   = Accuracy(task="multiclass", num_classes=num_classes)
+        self.test_accuracy  = Accuracy(task="multiclass", num_classes=num_classes)
+        self.confusion_matrix = ConfusionMatrix(task="multiclass", num_classes=num_classes)
 
 
     def forward(self, x):
-        x = F.relu(self.conv1_1(x))
-        x = F.relu(self.conv1_2(x))
-        x = self.pool(x)
-        
-        x = F.relu(self.conv2_1(x))
-        x = F.relu(self.conv2_2(x))
-        x = self.pool(x)
-        
-        x = F.relu(self.conv3(x))
-        x = self.pool(x)
 
-        x = x.view(x.size(0), -1) # Flatten
+        # conv block 1
+        x = F.relu(self.bn1(self.conv1_1(x)))
+        x = F.relu(self.bn1(self.conv1_2(x)))
+        x = self.pool1(x)
+        
+        # conv block 2
+        x = F.relu(self.bn2(self.conv2_1(x)))
+        x = F.relu(self.bn2(self.conv2_2(x)))
+        x = self.pool2(x)
 
-        x=F.relu(self.fc1(x))
-        x=F.relu(self.fc2(x))
-        x=self.fc3(x)
+        # conv block 3
+        x = F.relu(self.bn3(self.conv3_1(x)))
+        x = F.relu(self.bn3(self.conv3_2(x)))
+        x = self.pool3(x)
+
+        x = self.adaptive_pool(x) # 4x4 size
+        x = x.view(x.size(0), -1) # flatten
+
+        # fully connected layers
+        x = self.dropout(F.relu(self.fc1(x)))
+        x = self.fc2(x)
 
         return x
     
-
 
     def training_step(self, batch, batch_idx): 
         '''
@@ -64,12 +91,12 @@ class ImageClassifier(pl.LightningModule):
         loss = F.cross_entropy(logits, y) # calculate loss ( same as nn.CrossEntropyLoss() )
         # ACCURACY:
         preds = torch.argmax(logits, dim=1)
-        acc = self.train_accuracy(preds, y) # TODO: define train_accuracy metric in __init__()
+        acc = self.train_accuracy(preds, y)
 
-        # TODO: add logs/prints for loss & accuracy?
+        self.log("train_loss", loss, on_step=True, on_epoch=True, prog_bar=True)
+        self.log("train_acc", acc, on_step=True, on_epoch=True, prog_bar=True)
 
         return loss
-
 
 
     def validation_step(self, batch, batch_idx):
@@ -78,11 +105,8 @@ class ImageClassifier(pl.LightningModule):
         loss = F.cross_entropy(logits, y)
 
         preds = torch.argmax(logits, dim=1)
-        acc = self.val_accuracy(preds, y) # TODO: define val_accuracy metric in __init__()
-
-        self.log("val_loss", loss, prog_bar=True)
+        acc = self.val_accuracy(preds, y)
         self.log("val_acc", acc, prog_bar=True)
-
 
 
     def test_step(self, batch, batch_idx):
@@ -91,14 +115,23 @@ class ImageClassifier(pl.LightningModule):
         loss = F.cross_entropy(logits, y)
 
         preds = torch.argmax(logits, dim=1)
-        acc = self.test_accuracy(preds, y) # TODO: define test_accuracy metric in __init__()
+        acc = self.test_accuracy(preds, y)
 
         self.log("test_loss", loss, prog_bar=True)
         self.log("test_acc", acc, prog_bar=True)
 
 
+    def on_test_epoch_end(self):
+        # print confusion matrix after all test batches are done
+        cm = self.confusion_matrix.compute()
+        print("\nConfusion Matrix (rows=actual, cols=predicted)")
+        labels = ["low", "med", "high"]
+        for i, row in enumerate(cm):
+            print(f"{labels[i]}  {row.tolist()}")
+        self.confusion_matrix.reset()
+
 
     def configure_optimizers(self):
-        ...
-        return
+        # optimizer for how model weights are updated during training
+        return torch.optim.Adam(self.parameters(), lr=1e-3)
     
