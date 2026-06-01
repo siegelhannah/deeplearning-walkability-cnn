@@ -11,12 +11,14 @@ def train_model(train_loader, val_loader, test_loader,
     """
     Trains model architecture specified (scratch, resnet) 
     """
-    
+
     # select model
     if architecture == "scratch":
         model = CNN(num_classes=num_classes)
+    elif architecture == "resnet":
+        model = Pretrained_Resnet(num_classes=num_classes) # 224x224 imagery data is already ready for resnet18
     else:
-        model = Pretrained_Resnet(num_classes=num_classes)
+        raise ValueError("architecture must be one of: scratch, resnet,")
 
 
     early_stopping = EarlyStopping(monitor="val_loss", patience=5, mode="min") # "min" mode for loss
