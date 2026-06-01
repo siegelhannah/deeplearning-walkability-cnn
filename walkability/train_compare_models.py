@@ -34,12 +34,11 @@ for arch in architectures:
 # print summary table
 print("RESULTS SUMMARY")
 print(f"{'Model':<20} {'Test Acc':>10} {'Test Loss':>10}")
-print("-"*42)
 for arch, metrics in results.items():
     print(f"{arch:<20} {metrics['test_acc']:>10.4f} {metrics['test_loss']:>10.4f}")
 
 # Plot training curves for each model 
-fig, axes = plt.subplots(2, 3, figsize=(18, 10))
+fig, axes = plt.subplots(2, 2, figsize=(12, 10))
 fig.suptitle("Training Comparison: Scratch vs Pretrained", fontsize=16, fontweight="bold")
 
 
