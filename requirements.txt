@@ -150,7 +150,7 @@ typing_extensions==4.15.0
 tzdata==2026.2
 uri-template==1.3.0
 urllib3==2.7.0
--e git+ssh://git@github.com/siegelhannah/deeplearning-walkability-cnn.git@72a7a2de2996e58979fd0abc8cb8473261810d2e#egg=walkability
+-e git+ssh://git@github.com/siegelhannah/deeplearning-walkability-cnn.git@82e4a41706d5e5036bf016bfd55595ed2a16dbf0#egg=walkability
 wcwidth==0.7.0
 webcolors==25.10.0
 webencodings==0.5.1
