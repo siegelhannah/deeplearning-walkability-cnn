@@ -11,7 +11,7 @@ from torchmetrics import Accuracy, ConfusionMatrix
 
 class CNN(pl.LightningModule):
 
-    def __init__(self, num_classes=3): # 3 output classes
+    def __init__(self, num_classes=3, learning_rate=1e-4): # 3 output classes
         depth=32 # depth size based on # kernels applied
         self.save_hyperparameters()
         super().__init__()
@@ -133,5 +133,5 @@ class CNN(pl.LightningModule):
 
     def configure_optimizers(self):
         # optimizer for how model weights are updated during training
-        return torch.optim.Adam(self.parameters(), lr=1e-3)
+        return torch.optim.Adam(self.parameters(), lr=self.hparams.learning_rate)
     

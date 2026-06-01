@@ -11,7 +11,7 @@ from torchmetrics import Accuracy, ConfusionMatrix
 
 
 class Pretrained_Resnet(pl.LightningModule):
-    def __init__(self, num_classes=3, learning_rate=1e-4):
+    def __init__(self, num_classes=3, learning_rate=1e-5):
         super().__init__()
         self.save_hyperparameters()
 

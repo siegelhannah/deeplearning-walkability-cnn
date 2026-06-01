@@ -21,7 +21,7 @@ def train_model(train_loader, val_loader, test_loader,
         raise ValueError("architecture must be one of: scratch, resnet,")
 
 
-    early_stopping = EarlyStopping(monitor="val_loss", patience=5, mode="min") # "min" mode for loss
+    early_stopping = EarlyStopping(monitor="val_loss", patience=10, mode="min") # "min" mode for loss
 
     # pytorch lightning train loop
     trainer = pl.Trainer(
@@ -31,7 +31,7 @@ def train_model(train_loader, val_loader, test_loader,
         enable_progress_bar=True,
         enable_model_summary=True,
         log_every_n_steps=10,
-        callbacks=[early_stopping],
+        # callbacks=[early_stopping], # no callbacks for debugging
     )
 
     trainer.fit(model, train_loader, val_loader)
