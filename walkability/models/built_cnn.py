@@ -8,8 +8,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torchmetrics import Accuracy, ConfusionMatrix
-from torchvision import models
-
 
 class CNN(pl.LightningModule):
 

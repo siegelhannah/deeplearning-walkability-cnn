@@ -3,10 +3,21 @@
 import pytorch_lightning as pl
 from pytorch_lightning.callbacks import EarlyStopping
 from walkability.models.built_cnn import CNN
+from walkability.models.finetuned_resnet import Pretrained_Resnet
 
 
-def train_model(train_loader, val_loader, test_loader, num_classes=3, max_epochs=30): # TODO: max_epochs
-    model = CNN(num_classes=num_classes)
+def train_model(train_loader, val_loader, test_loader, 
+                num_classes=3, max_epochs=50, architecture="scratch"):
+    """
+    Trains model architecture specified (scratch, resnet) 
+    """
+    
+    # select model
+    if architecture == "scratch":
+        model = CNN(num_classes=num_classes)
+    else:
+        model = Pretrained_Resnet(num_classes=num_classes)
+
 
     early_stopping = EarlyStopping(monitor="val_loss", patience=5, mode="min") # "min" mode for loss
 
