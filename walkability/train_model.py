@@ -41,7 +41,7 @@ def train_model(train_loader, val_loader, test_loader,
         max_epochs=max_epochs,
         accelerator="auto", # automatically uses GPU if available
         devices=1,
-        enable_progress_bar=True,
+        enable_progress_bar=False, # to write less to .out
         enable_model_summary=True,
         log_every_n_steps=50, # less logs
         callbacks=[EpochSummary()] #, early_stopping] # less epochs # don't include early_stopping yet
