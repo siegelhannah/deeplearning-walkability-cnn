@@ -64,10 +64,10 @@ class CNN(pl.LightningModule):
         x = F.relu(self.bn2(self.conv2_2(x)))
         x = self.pool2(x)
 
-        # conv block 3
-        x = F.relu(self.bn3(self.conv3_1(x)))
-        x = F.relu(self.bn3(self.conv3_2(x)))
-        x = self.pool3(x)
+        # # conv block 3
+        # x = F.relu(self.bn3(self.conv3_1(x)))
+        # x = F.relu(self.bn3(self.conv3_2(x)))
+        # x = self.pool3(x)
 
         x = self.adaptive_pool(x) # 4x4 size
         x = x.view(x.size(0), -1) # flatten
