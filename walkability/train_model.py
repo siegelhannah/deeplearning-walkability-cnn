@@ -4,8 +4,8 @@ import pytorch_lightning as pl
 from pytorch_lightning.callbacks import EarlyStopping
 from walkability.models.built_cnn import CNN
 from walkability.models.finetuned_resnet import Pretrained_Resnet
-
 from pytorch_lightning.callbacks import Callback
+
 
 # for simplified epoch progress logging:
 class EpochSummary(Callback):
@@ -19,6 +19,7 @@ class EpochSummary(Callback):
         print(f"Epoch {epoch:3d} | train_loss: {train_loss:.4f} | val_loss: {val_loss:.4f} | train_acc: {train_acc:.4f} | val_acc: {val_acc:.4f}")
 
 
+
 def train_model(train_loader, val_loader, test_loader, 
                 num_classes=3, max_epochs=50, architecture="scratch"):
     """
@@ -28,13 +29,13 @@ def train_model(train_loader, val_loader, test_loader,
     # select model
     if architecture == "scratch":
         model = CNN(num_classes=num_classes)
+        callbacks = []  # no early stopping for scratch
     elif architecture == "resnet":
         model = Pretrained_Resnet(num_classes=num_classes) # 224x224 imagery data is already ready for resnet18
+        callbacks = [EarlyStopping(monitor="val_loss", patience=8, mode="min")] # early stopping
     else:
         raise ValueError("architecture must be one of: scratch, resnet,")
 
-
-    early_stopping = EarlyStopping(monitor="val_loss", patience=10, mode="min") # "min" mode for loss
 
     # pytorch lightning train loop
     trainer = pl.Trainer(
@@ -44,7 +45,7 @@ def train_model(train_loader, val_loader, test_loader,
         enable_progress_bar=False, # to write less to .out
         enable_model_summary=True,
         log_every_n_steps=50, # less logs
-        callbacks=[EpochSummary()] #, early_stopping] # less epochs # don't include early_stopping yet
+        callbacks=[EpochSummary(), callbacks] # less epochs printed, early stopping for resnet only
     )
 
     trainer.fit(model, train_loader, val_loader)
