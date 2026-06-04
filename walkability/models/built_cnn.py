@@ -36,10 +36,10 @@ class CNN(pl.LightningModule):
         # self.pool3   = nn.MaxPool2d(2, 2) # spatial size 56->28
         
         # collapse spatial dims to fixed size before FC layers
-        self.adaptive_pool = nn.AdaptiveAvgPool2d((4, 4)) # 4x4
+        self.adaptive_pool = nn.AdaptiveAvgPool2d((1, 1))  # collapses entire spatial dim
 
         # FC layers: 128 * 4 * 4 = 2048 -> 256 -> 3
-        self.fc1 = nn.Linear(depth * 4 * 4 * 4, 256)
+        self.fc1 = nn.Linear(depth*4, 256) # just 128 features
         self.fc2 = nn.Linear(256, num_classes) # 256->10
         # DROPOUT to prevent overfitting (too high = inflated validation loss)
         self.dropout = nn.Dropout(0.01) # 0.3 -> 0.1
