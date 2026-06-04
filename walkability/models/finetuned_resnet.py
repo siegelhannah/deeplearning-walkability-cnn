@@ -11,12 +11,25 @@ from torchmetrics import Accuracy, ConfusionMatrix
 
 
 class Pretrained_Resnet(pl.LightningModule):
-    def __init__(self, num_classes=3, learning_rate=1e-5):
+    def __init__(self, num_classes=3, learning_rate=1e-5): # smaller lr than scratch model
         super().__init__()
         self.save_hyperparameters()
 
         self.model = models.resnet18(weights=models.ResNet18_Weights.DEFAULT) # weights
-        self.model.fc = nn.Linear(self.model.fc.in_features, num_classes)
+
+        # FREEZE ARCHITECTURE: Turn off gradients for all layers
+        for param in self.model.parameters():
+            param.requires_grad = False
+
+        # new fc layer (head) WITH DROPOUT
+        self.model.fc = nn.Sequential(
+            nn.Dropout(0.3),
+            nn.Linear(self.model.fc.in_features, num_classes)
+            )
+
+        # unfreeze only the classifier head
+        for param in self.model.fc.parameters():
+            param.requires_grad = True
 
         # same metrics as from-scratch model
         self.train_accuracy = Accuracy(task="multiclass", num_classes=num_classes)
@@ -66,6 +79,7 @@ class Pretrained_Resnet(pl.LightningModule):
         loss = F.cross_entropy(logits, y)
 
         preds = torch.argmax(logits, dim=1)
+        self.confusion_matrix.update(preds, y)  # UPDATE CONFUSION MATRIX
         acc = self.test_accuracy(preds, y)
 
         self.log("test_loss", loss, prog_bar=True)
@@ -76,13 +90,12 @@ class Pretrained_Resnet(pl.LightningModule):
         # print confusion matrix after all test batches are done
         cm = self.confusion_matrix.compute()
         print("\nConfusion Matrix (rows=actual, cols=predicted)")
-        labels = ["low", "med", "high"]
-        for i, row in enumerate(cm):
-            print(f"{labels[i]}  {row.tolist()}")
+        print(cm)
         self.confusion_matrix.reset()
 
     
     def configure_optimizers(self):
-        # lower lr for fine-tuning than training from scratch
-        return torch.optim.Adam(self.parameters(), lr=self.hparams.learning_rate)
+        # FILTER PARAMETERS: Only give active gradients to the optimizer
+        trainable_params = filter(lambda p: p.requires_grad, self.parameters())
+        return torch.optim.Adam(trainable_params, lr=self.hparams.learning_rate)
         
