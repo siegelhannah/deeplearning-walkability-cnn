@@ -12,7 +12,7 @@ from torchmetrics import Accuracy, ConfusionMatrix
 class CNN(pl.LightningModule):
 
     def __init__(self, num_classes=3, learning_rate=1e-4): # 3 output classes
-        depth=32 # depth size based on # kernels applied
+        depth=16 # depth size based on # kernels applied # 32 -> 16
         self.save_hyperparameters()
         super().__init__()
 
@@ -29,20 +29,20 @@ class CNN(pl.LightningModule):
         self.bn2 = nn.BatchNorm2d(depth*2) # batch normalization after each conv layer (twice)
         self.pool2   = nn.MaxPool2d(2, 2) # spatial size 112 -> 56
 
-        # conv block 3
-        self.conv3_1 = nn.Conv2d(depth*2, depth*4, 3, padding='same') # 64->128
-        self.conv3_2 = nn.Conv2d(depth*4, depth*4, 3, padding='same') # 128->128
-        self.bn3 = nn.BatchNorm2d(depth*4) # batch normalization after each conv layer (twice)
-        self.pool3   = nn.MaxPool2d(2, 2) # spatial size 56->28
+        # # conv block 3
+        # self.conv3_1 = nn.Conv2d(depth*2, depth*4, 3, padding='same') # 64->128
+        # self.conv3_2 = nn.Conv2d(depth*4, depth*4, 3, padding='same') # 128->128
+        # self.bn3 = nn.BatchNorm2d(depth*4) # batch normalization after each conv layer (twice)
+        # self.pool3   = nn.MaxPool2d(2, 2) # spatial size 56->28
         
         # collapse spatial dims to fixed size before FC layers
-        self.adaptive_pool = nn.AdaptiveAvgPool2d((4, 4)) # 28 -> 4x4
+        self.adaptive_pool = nn.AdaptiveAvgPool2d((4, 4)) # 4x4
 
         # FC layers: 128 * 4 * 4 = 2048 -> 256 -> 3
         self.fc1 = nn.Linear(depth * 4 * 4 * 4, 256)
         self.fc2 = nn.Linear(256, num_classes) # 256->10
         # DROPOUT to prevent overfitting (too high = inflated validation loss)
-        self.dropout = nn.Dropout(0.05) # 0.3 -> 0.0.5
+        self.dropout = nn.Dropout(0.01) # 0.3 -> 0.1
 
 
         # METRICS
