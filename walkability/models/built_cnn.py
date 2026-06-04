@@ -42,7 +42,7 @@ class CNN(pl.LightningModule):
         self.fc1 = nn.Linear(depth * 4 * 4 * 4, 256)
         self.fc2 = nn.Linear(256, num_classes) # 256->10
         # DROPOUT to prevent overfitting (too high = inflated validation loss)
-        self.dropout = nn.Dropout(0.3) # TODO: tune?
+        self.dropout = nn.Dropout(0.05) # 0.3 -> 0.0.5
 
 
         # METRICS
@@ -115,6 +115,7 @@ class CNN(pl.LightningModule):
         loss = F.cross_entropy(logits, y)
 
         preds = torch.argmax(logits, dim=1)
+        self.confusion_matrix.update(preds, y)  # UPDATE CONFUSION MATRIX
         acc = self.test_accuracy(preds, y)
 
         self.log("test_loss", loss, prog_bar=True)
@@ -125,9 +126,7 @@ class CNN(pl.LightningModule):
         # print confusion matrix after all test batches are done
         cm = self.confusion_matrix.compute()
         print("\nConfusion Matrix (rows=actual, cols=predicted)")
-        labels = ["low", "med", "high"]
-        for i, row in enumerate(cm):
-            print(f"{labels[i]}  {row.tolist()}")
+        print(cm)
         self.confusion_matrix.reset()
 
 
