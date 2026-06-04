@@ -22,7 +22,7 @@ architectures = ["scratch", "resnet"]
 results = {}
 
 for arch in architectures:
-    model, trainer = train_model(train_loader, val_loader, test_loader, architecture=arch, max_epochs=50)
+    model, trainer = train_model(train_loader, val_loader, test_loader, architecture=arch, max_epochs=100)
 
     # get test metrics logged by Lightning
     test_results = trainer.callback_metrics
