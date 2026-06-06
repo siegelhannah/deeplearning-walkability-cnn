@@ -29,10 +29,10 @@ def train_model(train_loader, val_loader, test_loader,
     # select model
     if architecture == "scratch":
         model = CNN(num_classes=num_classes)
-        callbacks = EarlyStopping(monitor="val_loss", patience=15, mode="min") # longer early stopping for scratch
+        callbacks = [EarlyStopping(monitor="val_loss", patience=15, mode="min")] # longer early stopping for scratch
     elif architecture == "resnet":
         model = Pretrained_Resnet(num_classes=num_classes) # 224x224 imagery data is already ready for resnet18
-        callbacks = EarlyStopping(monitor="val_loss", patience=8, mode="min") # early stopping
+        callbacks = [EarlyStopping(monitor="val_loss", patience=8, mode="min")] # early stopping
     else:
         raise ValueError("architecture must be one of: scratch, resnet,")
 
