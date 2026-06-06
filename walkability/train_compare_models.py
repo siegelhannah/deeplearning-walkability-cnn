@@ -53,9 +53,9 @@ for col, arch in enumerate(architectures):
     metrics = pd.read_csv(log_path)
 
     # loss
-    train_loss = metrics.dropna(subset=["train_loss_epoch"])
+    train_loss = metrics.dropna(subset=["train_loss"])
     val_loss   = metrics.dropna(subset=["val_loss"])
-    axes[0][col].plot(train_loss["epoch"], train_loss["train_loss_epoch"], label="train")
+    axes[0][col].plot(train_loss["epoch"], train_loss["train_loss"], label="train")
     axes[0][col].plot(val_loss["epoch"],   val_loss["val_loss"],           label="val")
     axes[0][col].set_title(f"{arch} — Loss")
     axes[0][col].set_xlabel("Epoch")
@@ -63,9 +63,9 @@ for col, arch in enumerate(architectures):
     axes[0][col].legend()
 
     # accuracy
-    train_acc = metrics.dropna(subset=["train_acc_epoch"])
+    train_acc = metrics.dropna(subset=["train_acc"])
     val_acc   = metrics.dropna(subset=["val_acc"])
-    axes[1][col].plot(train_acc["epoch"], train_acc["train_acc_epoch"], label="train")
+    axes[1][col].plot(train_acc["epoch"], train_acc["train_acc"], label="train")
     axes[1][col].plot(val_acc["epoch"],   val_acc["val_acc"],           label="val")
     axes[1][col].set_title(f"{arch} — Accuracy")
     axes[1][col].set_xlabel("Epoch")
