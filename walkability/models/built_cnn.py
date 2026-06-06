@@ -12,21 +12,23 @@ from torchmetrics import Accuracy, ConfusionMatrix
 class CNN(pl.LightningModule):
 
     def __init__(self, num_classes=3, learning_rate=1e-4): # 3 output classes
-        depth=16 # depth size based on # kernels applied # 32 -> 16
-        self.save_hyperparameters()
         super().__init__()
+        self.save_hyperparameters()
+        depth=16 # depth size based on # kernels applied # 32 -> 16
 
         # input images: 224x224
         # conv block 1
         self.conv1_1 = nn.Conv2d(3, depth, 3, stride=1, padding='same') # 3 RGB channels -> 32 channels (via 64 kernels)
+        self.bn1_1 = nn.BatchNorm2d(depth)
         self.conv1_2 = nn.Conv2d(depth, depth, 3, stride=1, padding='same') # 32->32
-        self.bn1 = nn.BatchNorm2d(depth) # batch normalization after each conv layer (twice)
+        self.bn1_2 = nn.BatchNorm2d(depth) # batch normalization after each conv layer (twice)
         self.pool1   = nn.MaxPool2d(2, 2) # first pool: spatial size 224 -> 112
 
         # conv block 2
         self.conv2_1 = nn.Conv2d(depth, depth*2, 3, stride=1, padding='same') # 32->64
+        self.bn2_1 = nn.BatchNorm2d(depth*2)
         self.conv2_2 = nn.Conv2d(depth*2, depth*2, 3, stride=1, padding=1) # 64->64
-        self.bn2 = nn.BatchNorm2d(depth*2) # batch normalization after each conv layer (twice)
+        self.bn2_2 = nn.BatchNorm2d(depth*2) # batch normalization after each conv layer (twice)
         self.pool2   = nn.MaxPool2d(2, 2) # spatial size 112 -> 56
 
         # # conv block 3
@@ -39,10 +41,10 @@ class CNN(pl.LightningModule):
         self.adaptive_pool = nn.AdaptiveAvgPool2d((1, 1))  # collapses entire spatial dim
 
         # FC layers: 128 * 4 * 4 = 2048 -> 256 -> 3
-        self.fc1 = nn.Linear(depth*4, 256) # just 128 features
+        self.fc1 = nn.Linear(depth*2, 256) # just 128 features
         self.fc2 = nn.Linear(256, num_classes) # 256->10
         # DROPOUT to prevent overfitting (too high = inflated validation loss)
-        self.dropout = nn.Dropout(0.01) # 0.3 -> 0.1
+        self.dropout = nn.Dropout(0.2) # 0.3 -> 0.2
 
 
         # METRICS
@@ -55,13 +57,13 @@ class CNN(pl.LightningModule):
     def forward(self, x):
 
         # conv block 1
-        x = F.relu(self.bn1(self.conv1_1(x)))
-        x = F.relu(self.bn1(self.conv1_2(x)))
+        x = F.relu(self.bn1_1(self.conv1_1(x)))
+        x = F.relu(self.bn1_2(self.conv1_2(x)))
         x = self.pool1(x)
         
         # conv block 2
-        x = F.relu(self.bn2(self.conv2_1(x)))
-        x = F.relu(self.bn2(self.conv2_2(x)))
+        x = F.relu(self.bn2_1(self.conv2_1(x)))
+        x = F.relu(self.bn2_2(self.conv2_2(x)))
         x = self.pool2(x)
 
         # # conv block 3
@@ -132,5 +134,12 @@ class CNN(pl.LightningModule):
 
     def configure_optimizers(self):
         # optimizer for how model weights are updated during training
-        return torch.optim.Adam(self.parameters(), lr=self.hparams.learning_rate)
-    
+        optimizer = torch.optim.Adam(self.parameters(), lr=self.hparams.learning_rate)
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+            optimizer, mode="min", factor=0.5, patience=5
+        )
+        return {
+            "optimizer": optimizer,
+            "lr_scheduler": {"scheduler": scheduler, "monitor": "val_loss"}
+        }
+        
