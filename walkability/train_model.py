@@ -45,7 +45,7 @@ def train_model(train_loader, val_loader, test_loader,
         enable_progress_bar=False, # to write less to .out
         enable_model_summary=True,
         log_every_n_steps=50, # less logs
-        callbacks=[EpochSummary(), callbacks] # less epochs printed, early stopping for resnet only
+        callbacks=[EpochSummary()] + callbacks # less epochs printed, early stopping for resnet only
     )
 
     trainer.fit(model, train_loader, val_loader)
