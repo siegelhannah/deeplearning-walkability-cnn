@@ -13,11 +13,10 @@ class EpochSummary(Callback):
         metrics = trainer.callback_metrics
         epoch = trainer.current_epoch
         train_loss = metrics.get("train_loss", float("nan"))
-        val_loss   = metrics.get("val_loss",         float("nan"))
-        train_acc  = metrics.get("train_acc",  float("nan"))
-        val_acc    = metrics.get("val_acc",          float("nan"))
+        val_loss   = metrics.get("val_loss", float("nan"))
+        train_acc  = metrics.get("train_acc", float("nan"))
+        val_acc    = metrics.get("val_acc", float("nan"))
         print(f"Epoch {epoch:3d} | train_loss: {train_loss:.4f} | val_loss: {val_loss:.4f} | train_acc: {train_acc:.4f} | val_acc: {val_acc:.4f}")
-
 
 
 def train_model(train_loader, val_loader, test_loader, 
