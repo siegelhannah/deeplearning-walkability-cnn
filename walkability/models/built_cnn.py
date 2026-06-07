@@ -86,28 +86,9 @@ class CNN(pl.LightningModule):
         What happens in one step of the training loop (calculating loss, etc.)
         '''
         x, y = batch # batch includes x: images and y: labels
-        # debug
-        if batch_idx == 0:
-            print("x nan:", torch.isnan(x).any().item())
-            print("x inf:", torch.isinf(x).any().item())
-            print("x min/max:", x.min().item(), x.max().item())
-            print("y dtype:", y.dtype)
-            print("y unique:", torch.unique(y))
-
         # LOSS:
         logits = self(x) # make prediction
-
-        # debug
-        if batch_idx == 0:
-            print("logits nan:", torch.isnan(logits).any().item())
-            print("logits min/max:", logits.min().item(), logits.max().item())
-
         loss = F.cross_entropy(logits, y) # calculate loss ( same as nn.CrossEntropyLoss() )
-
-        # debug
-        if batch_idx == 0:
-            print("loss:", loss.item())
-
         # ACCURACY:
         preds = torch.argmax(logits, dim=1)
         acc = self.train_accuracy(preds, y)
@@ -117,7 +98,7 @@ class CNN(pl.LightningModule):
 
         return loss
     
-    
+
 
     def validation_step(self, batch, batch_idx):
         x, y = batch
