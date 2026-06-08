@@ -27,7 +27,9 @@ class Pretrained_Resnet(pl.LightningModule):
             nn.Linear(self.model.fc.in_features, num_classes)
             )
 
-        # unfreeze only the classifier head
+        # unfreeze only the last residual block + fc head
+        for param in self.model.layer4.parameters():
+            param.requires_grad = True
         for param in self.model.fc.parameters():
             param.requires_grad = True
 
