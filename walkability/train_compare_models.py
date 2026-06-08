@@ -20,9 +20,12 @@ train_loader, val_loader, test_loader = get_data_loaders(base_path=BASE_PATH, na
 # train both models
 architectures = ["scratch", "resnet"]
 results = {}
+versions = {}
 
 for arch in architectures:
-    model, trainer = train_model(train_loader, val_loader, test_loader, architecture=arch, max_epochs=100)
+    model, trainer, version = train_model(train_loader, val_loader, test_loader, architecture=arch, max_epochs=45)
+
+    versions[arch] = version
 
     # get test metrics logged by Lightning
     test_results = trainer.callback_metrics
@@ -43,14 +46,15 @@ fig.suptitle("Training Comparison: Scratch vs Pretrained", fontsize=16, fontweig
 
 
 for col, arch in enumerate(architectures):
+    version = versions[arch]
     # Lightning saves logs to lightning_logs/version_0, version_1, version_2 in order
-    log_path = f"lightning_logs/version_{col}/metrics.csv"
-    if not os.path.exists(log_path):
-        print(f"Warning: no log found at {log_path}")
-        continue
-
+    log_path = f"lightning_logs/version_{version}/metrics.csv"
 
     metrics = pd.read_csv(log_path)
+    
+    # debugging
+    print(f"Reading: {log_path}")
+    print(metrics.columns.tolist())
 
     # loss
     train_loss = metrics.dropna(subset=["train_loss"])
@@ -75,5 +79,4 @@ for col, arch in enumerate(architectures):
 
 
 plt.tight_layout()
-plt.savefig("logs/training_curves.png", dpi=150, bbox_inches="tight")
-print("\nTraining curves saved to logs/training_curves.png")
+plt.savefig(f"logs/training_curves_{version}.png", dpi=150, bbox_inches="tight")

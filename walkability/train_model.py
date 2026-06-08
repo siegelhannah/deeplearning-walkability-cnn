@@ -50,4 +50,6 @@ def train_model(train_loader, val_loader, test_loader,
     trainer.fit(model, train_loader, val_loader)
     trainer.test(model, test_loader)
 
-    return model, trainer
+    return model, trainer, trainer.logger.version # keep track of versions for PL logs
+
+
