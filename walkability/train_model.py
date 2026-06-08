@@ -5,7 +5,14 @@ from pytorch_lightning.callbacks import EarlyStopping
 from walkability.models.built_cnn import CNN
 from walkability.models.finetuned_resnet import Pretrained_Resnet, Satellite_Resnet
 from pytorch_lightning.callbacks import Callback
+from pytorch_lightning.loggers import CSVLogger
 
+
+
+logger = CSVLogger(
+    save_dir="lightning_logs",
+    name=""
+)
 
 # for simplified epoch progress logging:
 class EpochSummary(Callback):
@@ -40,6 +47,7 @@ def train_model(train_loader, val_loader, test_loader,
 
     # pytorch lightning train loop
     trainer = pl.Trainer(
+        logger=logger,
         max_epochs=max_epochs,
         accelerator="auto", # automatically uses GPU if available
         devices=1,
@@ -52,6 +60,5 @@ def train_model(train_loader, val_loader, test_loader,
     trainer.fit(model, train_loader, val_loader)
     trainer.test(model, test_loader)
 
-    return model, trainer, trainer.logger.version # keep track of versions for PL logs
-
+    return model, trainer, logger.log_dir # keep track of versions for PL logs
 
