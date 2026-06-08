@@ -11,7 +11,7 @@ from torchmetrics import Accuracy, ConfusionMatrix
 
 class CNN(pl.LightningModule):
 
-    def __init__(self, num_classes=3, learning_rate=1e-4): # 3 output classes
+    def __init__(self, num_classes=3, learning_rate=1e-5): # 3 output classes
         super().__init__()
         self.save_hyperparameters()
         depth=16 # depth size based on # kernels applied # 32 -> 16
