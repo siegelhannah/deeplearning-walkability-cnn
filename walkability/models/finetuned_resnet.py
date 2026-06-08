@@ -106,6 +106,16 @@ class Satellite_Resnet(pl.LightningModule):
         for param in self.model.parameters():
             param.requires_grad = False
 
+        # new conv layer1 with 3 channels instead of 13
+        self.model.conv1 = nn.Conv2d(
+            in_channels=3,
+            out_channels=64,
+            kernel_size=7,
+            stride=2,
+            padding=3,
+            bias=False,
+        )
+
         # new fc layer (head) WITH DROPOUT
         self.model.fc = nn.Sequential(nn.Dropout(0.3), nn.Linear(self.model.fc.in_features, num_classes))
 
