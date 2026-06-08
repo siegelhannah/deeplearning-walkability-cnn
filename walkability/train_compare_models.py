@@ -23,6 +23,7 @@ results = {}
 versions = {}
 
 for arch in architectures:
+    print(f"TRAINING MODEL: {arch}")
     model, trainer, version = train_model(train_loader, val_loader, test_loader, architecture=arch, max_epochs=45)
 
     versions[arch] = version
