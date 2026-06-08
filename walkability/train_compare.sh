@@ -4,7 +4,7 @@
 #SBATCH --error=logs/train_%j.err
 #SBATCH --partition=gpu
 #SBATCH --account=dsci410_510
-#SBATCH --time=12:00:00
+#SBATCH --time=16:00:00
 #SBATCH --nodes=1
 #SBATCH --mem=64G
 #SBATCH --cpus-per-task=4
