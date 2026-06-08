@@ -17,14 +17,14 @@ BASE_PATH = "/projects/dsci410_510/data/walkability_dataset/"
 train_loader, val_loader, test_loader = get_data_loaders(base_path=BASE_PATH, name="all", batch_size=32)
 
 
-# train both models
-architectures = ["scratch", "resnet"]
+# train all 3 models
+architectures = ["scratch", "resnet", "satellite"]
 results = {}
 versions = {}
 
 for arch in architectures:
     print(f"TRAINING MODEL: {arch}")
-    model, trainer, version = train_model(train_loader, val_loader, test_loader, architecture=arch, max_epochs=150)
+    model, trainer, version = train_model(train_loader, val_loader, test_loader, architecture=arch, max_epochs=4)
 
     versions[arch] = version
 
@@ -42,7 +42,7 @@ for arch, metrics in results.items():
     print(f"{arch:<20} {metrics['test_acc']:>10.4f} {metrics['test_loss']:>10.4f}")
 
 # Plot training curves for each model 
-fig, axes = plt.subplots(2, 2, figsize=(12, 10))
+fig, axes = plt.subplots(2, 3, figsize=(18, 10))
 fig.suptitle("Training Comparison: Scratch vs Pretrained", fontsize=16, fontweight="bold")
 
 
