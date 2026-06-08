@@ -3,7 +3,7 @@
 import pytorch_lightning as pl
 from pytorch_lightning.callbacks import EarlyStopping
 from walkability.models.built_cnn import CNN
-from walkability.models.finetuned_resnet import Pretrained_Resnet
+from walkability.models.finetuned_resnet import Pretrained_Resnet, Satellite_Resnet
 from pytorch_lightning.callbacks import Callback
 
 
@@ -28,13 +28,15 @@ def train_model(train_loader, val_loader, test_loader,
     # select model
     if architecture == "scratch":
         model = CNN(num_classes=num_classes)
-        callbacks = [EarlyStopping(monitor="val_loss", patience=20, mode="min")] # longer early stopping for scratch
+        callbacks = [EarlyStopping(monitor="val_loss", patience=15, mode="min")] # longer early stopping for scratch
     elif architecture == "resnet":
         model = Pretrained_Resnet(num_classes=num_classes) # 224x224 imagery data is already ready for resnet18
-        callbacks = [EarlyStopping(monitor="val_loss", patience=20, mode="min")] # early stopping
+        callbacks = [EarlyStopping(monitor="val_loss", patience=10, mode="min")] # early stopping
+    elif architecture == "satellite":
+        model = Satellite_Resnet(num_classes=num_classes) # same resnet18 but trained on satellite imagery
+        callbacks = [EarlyStopping(monitor="val_loss", patience=10, mode="min")] # same early stopping
     else:
-        raise ValueError("architecture must be one of: scratch, resnet,")
-
+        raise ValueError("architecture must be one of: scratch, resnet, satellite")
 
     # pytorch lightning train loop
     trainer = pl.Trainer(
@@ -44,7 +46,7 @@ def train_model(train_loader, val_loader, test_loader,
         enable_progress_bar=False, # to write less to .out
         enable_model_summary=True,
         log_every_n_steps=50, # less logs
-        callbacks=[EpochSummary()] + callbacks # less epochs printed, early stopping for resnet only
+        callbacks=[EpochSummary()] + callbacks # less epochs printed, early stopping for resnet(s) only
     )
 
     trainer.fit(model, train_loader, val_loader)
