@@ -17,16 +17,16 @@ BASE_PATH = "/projects/dsci410_510/data/walkability_dataset/"
 train_loader, val_loader, test_loader = get_data_loaders(base_path=BASE_PATH, name="all", batch_size=32)
 
 
-# train all 3 models
+# train all models
 architectures = ["scratch", "resnet", "satellite"]
 results = {}
-versions = {}
+metric_files = {}
 
 for arch in architectures:
     print(f"TRAINING MODEL: {arch}")
-    model, trainer, version = train_model(train_loader, val_loader, test_loader, architecture=arch, max_epochs=4)
+    model, trainer, metrics_path = train_model(train_loader, val_loader, test_loader, architecture=arch, max_epochs=150)
 
-    versions[arch] = version
+    metric_files[arch] = os.path.join(metrics_path, "metrics.csv")
 
     # get test metrics logged by Lightning
     test_results = trainer.callback_metrics
@@ -47,10 +47,8 @@ fig.suptitle("Training Comparison: Scratch vs Pretrained", fontsize=16, fontweig
 
 
 for col, arch in enumerate(architectures):
-    version = versions[arch]
     # Lightning saves logs to lightning_logs/version_0, version_1, version_2 in order
-    log_path = f"lightning_logs/version_{version}/metrics.csv"
-
+    log_path = metric_files[arch]
     metrics = pd.read_csv(log_path)
     
     # debugging
@@ -77,7 +75,7 @@ for col, arch in enumerate(architectures):
     axes[1][col].set_ylabel("Accuracy")
     axes[1][col].legend()
 
-
-
 plt.tight_layout()
+
+version = os.path.basename(os.path.dirname(log_path))
 plt.savefig(f"logs/training_curves_{version}.png", dpi=150, bbox_inches="tight")
