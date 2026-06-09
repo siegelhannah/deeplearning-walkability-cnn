@@ -34,9 +34,9 @@ The pre-trained ResNet18 has 0.3 dropout on the fine-tuned fc linear layers, a l
 
 The boiler plate code/functions to train either model can be found in [train_model.py](https://github.com/siegelhannah/deeplearning-walkability-cnn/blob/main/walkability/train_model.py).
 
-The script [train_compare_models.py](https://github.com/siegelhannah/deeplearning-walkability-cnn/blob/main/walkability/train_compare_models.py) runs train_model.py for each model using training dataloaders. The script compares overall performance between the two models by printing epoch summaries, plotting training and validation accuracy/loss over the training process, and outputting final accuracies and confusion matrices.
+The script [train_compare_models.py](https://github.com/siegelhannah/deeplearning-walkability-cnn/blob/main/walkability/train_compare_models.py) runs `train_model.py` for each model using training dataloaders. The script compares overall performance between the two models by printing epoch summaries, plotting training and validation accuracy/loss over the training process, and outputting final accuracies and confusion matrices.
 
-For convenience, train_compare_models.py can be run in a SLURM job on Talapas (or other HPC) using [train_compare.sh](https://github.com/siegelhannah/deeplearning-walkability-cnn/blob/main/walkability/train_compare.sh).
+For convenience, `train_compare_models.py` can be run in a SLURM job on Talapas (or other HPC) using [train_compare.sh](https://github.com/siegelhannah/deeplearning-walkability-cnn/blob/main/walkability/train_compare.sh).
 
 
 ## Results
