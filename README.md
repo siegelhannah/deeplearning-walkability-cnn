@@ -41,8 +41,16 @@ For convenience, `train_compare_models.py` can be run in a SLURM job on Talapas 
 
 ## Results
 
+This project is essentially a 3-class classification problem (low, medium, high walkability) using binned NWI scores as ground truth. Model performance is evaluated using overall accuracy, as well as a confusion matrix across the three walkability classes.
+
+When trained for 150 epochs with data batch size 32 and all the other model parameters specified above, both models achieved around 55% accuracy on test data (the scratch CNN achieved 0.5523 and the fine-tuned ResNet18 achieved 0.5535).
+
+345678909876543234567890 CONFUSION MATRIX 56789876567890
+
+
 
 ## Discussion and Limitations
+
 
 
 ## General Usage:
