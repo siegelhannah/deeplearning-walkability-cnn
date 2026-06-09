@@ -18,6 +18,9 @@ See [data.md](https://github.com/siegelhannah/deeplearning-walkability-cnn/blob/
 
 The dataset is stored on Talapas at `/projects/dsci410_510/data/walkability_dataset/` or can be re-downloaded via `dataset_download.py`
 
+Example data samples from `data_demo.ipynb`:
+![Data samples](assets/data_demo_patches.png)
+
 
 ## Models
 
@@ -45,8 +48,8 @@ This project is essentially a 3-class classification problem (low, medium, high 
 
 When trained for 150 epochs with data batch size 32 and all the other model parameters specified above, both models achieved around 55% accuracy on test data (the scratch CNN achieved 0.5523 and the fine-tuned ResNet18 achieved 0.5535).
 
-345678909876543234567890 CONFUSION MATRIX 56789876567890
-
+Confusion matrix:
+![Confusion matrix](assets/confusion_matrices.png)
 
 
 ## Discussion and Limitations
