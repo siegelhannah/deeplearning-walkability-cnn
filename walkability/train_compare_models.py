@@ -18,7 +18,7 @@ train_loader, val_loader, test_loader = get_data_loaders(base_path=BASE_PATH, na
 
 
 # train all models
-architectures = ["scratch", "resnet", "satellite"]
+architectures = ["scratch", "resnet"]
 results = {}
 metric_files = {}
 
@@ -31,7 +31,7 @@ for arch in architectures:
     # get test metrics logged by Lightning
     test_results = trainer.callback_metrics
     results[arch] = {
-        "test_acc":  float(test_results.get("test_acc",  0)),
+        "test_acc": float(test_results.get("test_acc",  0)),
         "test_loss": float(test_results.get("test_loss", 0)),
     }
 
@@ -42,7 +42,7 @@ for arch, metrics in results.items():
     print(f"{arch:<20} {metrics['test_acc']:>10.4f} {metrics['test_loss']:>10.4f}")
 
 # Plot training curves for each model 
-fig, axes = plt.subplots(2, 3, figsize=(18, 10))
+fig, axes = plt.subplots(2, 2, figsize=(12, 10))
 fig.suptitle("Training Comparison: Scratch vs Pretrained", fontsize=16, fontweight="bold")
 
 
@@ -57,9 +57,9 @@ for col, arch in enumerate(architectures):
 
     # loss
     train_loss = metrics.dropna(subset=["train_loss"])
-    val_loss   = metrics.dropna(subset=["val_loss"])
+    val_loss = metrics.dropna(subset=["val_loss"])
     axes[0][col].plot(train_loss["epoch"], train_loss["train_loss"], label="train")
-    axes[0][col].plot(val_loss["epoch"],   val_loss["val_loss"],           label="val")
+    axes[0][col].plot(val_loss["epoch"], val_loss["val_loss"], label="val")
     axes[0][col].set_title(f"{arch} — Loss")
     axes[0][col].set_xlabel("Epoch")
     axes[0][col].set_ylabel("Loss")
@@ -67,9 +67,9 @@ for col, arch in enumerate(architectures):
 
     # accuracy
     train_acc = metrics.dropna(subset=["train_acc"])
-    val_acc   = metrics.dropna(subset=["val_acc"])
+    val_acc = metrics.dropna(subset=["val_acc"])
     axes[1][col].plot(train_acc["epoch"], train_acc["train_acc"], label="train")
-    axes[1][col].plot(val_acc["epoch"],   val_acc["val_acc"],           label="val")
+    axes[1][col].plot(val_acc["epoch"], val_acc["val_acc"], label="val")
     axes[1][col].set_title(f"{arch} — Accuracy")
     axes[1][col].set_xlabel("Epoch")
     axes[1][col].set_ylabel("Accuracy")
