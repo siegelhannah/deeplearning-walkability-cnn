@@ -13,11 +13,11 @@ The specific aim of this project is to assess whether a convolutional neural net
 
 The dataset for this project was constructed from scratch, consisting of ~8,400 satellite image patches across the United States, labeled by neighborhood walkability class (low / medium / high) These data samples were derived from the [EPA National Walkability Index (NWI) geodatabase](https://www.epa.gov/smartgrowth/smart-location-mapping#walkability) and [Mapbox Static Images API satellite imagery](https://docs.mapbox.com/api/maps/static-images/). Each image is a 512×512 JPEG aerial photo (later normalized to 224x224) centered on a US census block group centroid, fetched at zoom level 16 (~0.3–0.6m resolution).
 
-The dataset was built by filtering the NWI dataset to a representative subset of cities & fetching satellite imagery for the centroid coordinates of each neighborhood, effectively creating a large dataset of satellite imagery patches and their corresponding numerically encoded labels (low=0, medium=1, high=2).
+The dataset was built by filtering the NWI dataset to a representative subset of cities & fetching satellite imagery for the centroid coordinates of each neighborhood, effectively creating a large dataset of satellite imagery patches and their corresponding numerically encoded labels (low=0, medium=1, high=2). It has been pre-split into train, validation, and test sets with a split of 60%-20%-20%.
 
 See [data.md](https://github.com/siegelhannah/deeplearning-walkability-cnn/blob/main/walkability/dataset/data.md) for more detailed dataset description, and [dataset_download.py](https://github.com/siegelhannah/deeplearning-walkability-cnn/blob/main/walkability/dataset/dataset_download.py) for specific construction details.
 
-The dataset is stored on Talapas at `/projects/dsci410_510/data/walkability_dataset/`.
+The dataset is stored on Talapas at `/projects/dsci410_510/data/walkability_dataset/` or can be re-downloaded via `dataset_download.py`
 
 
 ## Models
@@ -33,13 +33,15 @@ The pre-trained ResNet18 has 0.3 dropout on the fine-tuned fc linear layers, a l
 
 ## Training Instructions
 
+The boiler plate code/functions to train either model can be found in [train_model.py](https://github.com/siegelhannah/deeplearning-walkability-cnn/blob/main/walkability/train_model.py).
 
+The script [train_compare_models.py](https://github.com/siegelhannah/deeplearning-walkability-cnn/blob/main/walkability/train_compare_models.py) runs train_model.py for each model using training dataloaders. The script compares overall performance between the two models by printing epoch summaries, plotting training and validation accuracy/loss over the training process, and outputting final accuracies and confusion matrices.
 
-
+For convenience, train_compare_models.py can be run in a SLURM job on Talapas (or other HPC) using [train_compare.sh](https://github.com/siegelhannah/deeplearning-walkability-cnn/blob/main/walkability/train_compare.sh).
 
 
 ## Results
-In progress
+
 
 ## Discussion and Limitations
 
