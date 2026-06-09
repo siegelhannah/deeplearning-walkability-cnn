@@ -30,12 +30,6 @@ class CNN(pl.LightningModule):
         self.conv2_2 = nn.Conv2d(depth*2, depth*2, 3, stride=1, padding=1) # 64->64
         self.bn2_2 = nn.BatchNorm2d(depth*2) # batch normalization after each conv layer (twice)
         self.pool2   = nn.MaxPool2d(2, 2) # spatial size 112 -> 56
-
-        # # conv block 3
-        # self.conv3_1 = nn.Conv2d(depth*2, depth*4, 3, padding='same') # 64->128
-        # self.conv3_2 = nn.Conv2d(depth*4, depth*4, 3, padding='same') # 128->128
-        # self.bn3 = nn.BatchNorm2d(depth*4) # batch normalization after each conv layer (twice)
-        # self.pool3   = nn.MaxPool2d(2, 2) # spatial size 56->28
         
         # collapse spatial dims to fixed size before FC layers
         self.adaptive_pool = nn.AdaptiveAvgPool2d((1, 1))  # collapses entire spatial dim
@@ -65,11 +59,6 @@ class CNN(pl.LightningModule):
         x = F.relu(self.bn2_1(self.conv2_1(x)))
         x = F.relu(self.bn2_2(self.conv2_2(x)))
         x = self.pool2(x)
-
-        # # conv block 3
-        # x = F.relu(self.bn3(self.conv3_1(x)))
-        # x = F.relu(self.bn3(self.conv3_2(x)))
-        # x = self.pool3(x)
 
         x = self.adaptive_pool(x) # 4x4 size
         x = x.view(x.size(0), -1) # flatten
