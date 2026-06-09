@@ -1,11 +1,13 @@
 # Deep-learning-final-project
 CNN Prediction of Neighborhood Walkability from Satellite Imagery
 
+
 ## Project Overview and Purpose
 
 This project investigates predicting neighborhood walkability using overhead satellite imagery. "Walkability" is defined as the degree to which a built environment supports walking as a main mode of transportation, based on factors like sidewalk and road infrastructure, building and intersection density, etc. Walkability in urban environments plays a large role in things like public health, sustainability, and equitable city design, and is interesting to me personally as a spatial data science student.
 
 The specific aim of this project is to assess whether a convolutional neural network trained solely on overhead aerial imagery can accurately classify neighborhood walkability scores without any ground-level data (i.e. Google Streetview).
+
 
 ## Dataset
 
@@ -18,16 +20,31 @@ See [data.md](https://github.com/siegelhannah/deeplearning-walkability-cnn/blob/
 The dataset is stored on Talapas at `/projects/dsci410_510/data/walkability_dataset/`.
 
 
-## Methods
-In progress
+## Models
+
+The models trained on this dataset include:
+1. A CNN built from scratch
+2. A pre-trained, fine-tuned ResNet18 model (pre-trained on ImageNet data)
+
+The from-scratch CNN has two convolutional blocks (with conv layers, batch normalization, and max pooling) and 0.2 dropout on the fc linear layers. It uses a learning rate of 1e-5 and Early Stopping patience=15.
+
+The pre-trained ResNet18 has 0.3 dropout on the fine-tuned fc linear layers, a learning rate of 1e-5, and Early Stopping patience=10.
+
+
+## Training Instructions
+
+
+
+
+
 
 ## Results
 In progress
 
-## Conclusion
-In progress
+## Discussion and Limitations
 
-## Usage:
+
+## General Usage:
 
 1. Clone the repo and install:
 
