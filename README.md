@@ -1,7 +1,7 @@
 # Deep-learning-final-project
 CNN Prediction of Neighborhood Walkability from Satellite Imagery
 
-## Project Overview
+## Project Overview and Purpose
 Satellite image patches are labeled by walkability class (low / medium / high)
 derived from the EPA National Walkability Index. A CNN is trained to classify
 walkability from overhead aerial imagery alone, without any ground-level data.
