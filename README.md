@@ -1,14 +1,14 @@
 # CNN Prediction of Neighborhood Walkability from Satellite Imagery
 
 
-## Project Overview and Purpose
+## Project Overview and Purpose:
 
 This project investigates predicting neighborhood walkability using overhead satellite imagery. "Walkability" is defined as the degree to which a built environment supports walking as a main mode of transportation, based on factors like sidewalk and road infrastructure, building and intersection density, etc. Walkability in urban environments plays a large role in things like public health, sustainability, and equitable city design, and is interesting to me personally as a spatial data science student.
 
 The specific aim of this project is to assess whether a convolutional neural network trained solely on overhead aerial imagery can accurately classify neighborhood walkability scores without any ground-level data (i.e. Google Streetview).
 
 
-## Dataset
+## Dataset:
 
 The dataset for this project was constructed from scratch, consisting of ~8,400 satellite image patches across the United States, labeled by neighborhood walkability class (low / medium / high) These data samples were derived from the [EPA National Walkability Index (NWI) geodatabase](https://www.epa.gov/smartgrowth/smart-location-mapping#walkability) and [Mapbox Static Images API satellite imagery](https://docs.mapbox.com/api/maps/static-images/). Each image is a 512×512 JPEG aerial photo (later normalized to 224x224) centered on a US census block group centroid, fetched at zoom level 16 (~0.3–0.6m resolution).
 
@@ -23,7 +23,7 @@ Example data samples from `data_demo.ipynb`:
 ![Data samples](assets/data_demo_patches.png)
 
 
-## Models
+## Models:
 
 The models trained on this dataset include:
 1. A CNN built from scratch
@@ -34,7 +34,7 @@ The from-scratch CNN has two convolutional blocks (with conv layers, batch norma
 The pre-trained ResNet18 has 0.3 dropout on the fine-tuned fc linear layers, a learning rate of 1e-5, and Early Stopping patience=10.
 
 
-## Training Instructions
+## Training Instructions:
 
 The boiler plate code/functions to train either model can be found in [train_model.py](https://github.com/siegelhannah/deeplearning-walkability-cnn/blob/main/walkability/train_model.py).
 
@@ -43,7 +43,7 @@ The script [train_compare_models.py](https://github.com/siegelhannah/deeplearnin
 For convenience, `train_compare_models.py` can be run in a SLURM job on Talapas (or other HPC) using [train_compare.sh](https://github.com/siegelhannah/deeplearning-walkability-cnn/blob/main/walkability/train_compare.sh).
 
 
-## Results
+## Results:
 
 This project is essentially a 3-class classification problem (low, medium, high walkability) using binned NWI scores as ground truth. Model performance is evaluated using overall accuracy, as well as a confusion matrix across the three walkability classes.
 
@@ -59,7 +59,7 @@ Confusion matrix:
 ![Confusion matrix](assets/confusion_matrices.png)
 
 
-## Discussion and Limitations
+## Discussion and Limitations:
 
 Interestingly, both models achieved similar performance despite one being built from scratch and the other being pre-trained. Both models performed better than random (random accuracy on a 3-class problem = 0.33), but still had relatively low accuracy.
 
@@ -67,9 +67,9 @@ The training curves show accuracy plateauing/converging at this low value, even 
 
 The output confusion matrices offer more insight into where the models failed, showing common mis-classifications. Both models, when wrong, tended to predict a higher walkability class than the true class (for example, predicting more "high" than "low" when the true class was "medium"). In fact, the ResNet18 model actually predicted "high" _more_ than "medium" when the true class was "high". This is an interesting bias towards higher walkability predictions, suggesting that the model could have learned from the training data that predicting higher classes was a safer choice. 
 
-There are some limitations of this project, from both the training dataset construction and the model training:
-* First, the NWI data is different for every city, and census block groups/neighborhoods are not always the same size. This results in some cities having many more neighborhoods than others, which I accounted for by capping the neighborhoods per class from each city. However, because neighborhoods can be different sizes and range from densely clustered to large and sprawling, satellite imagery fetched at the centroid coordinates of each neighborhood may not actually be representative of the neighborhood's true features (the fixed size of MapBox satellite images may be bigger or smaller than the neighborhood). Also, walkability is a metric calculated from a combination of features, some of which can't be explicitly determined by overhead satellite imagery alone (e.g., sidewalk quality, distance from transit centers). For these reasons there is an inherent limitation of trying to predict a street-level metric with overhead imagery data.
-* Another training limitation was that the pre-trained ResNet18 model was trained on ImageNet data, which isn't satellite imagery. Future work on this project could include fine-tuning a model specifically built for analyzing patterns in overhead satellite imagery photos.
+Limitations of this project (in dataset construction and model training):
+* The NWI data is different for every city: Census block groups/neighborhoods are not always the same size, and range from densely clustered to large and sprawling. This means satellite imagery fetched at the centroid coordinates of each neighborhood may not actually be representative of the neighborhood's true features (might be too big/too small). Also, the metric of walkability is calculated from a combination of features, some of which can't be determined by overhead satellite imagery alone (e.g., sidewalk quality, distance from transit centers). For these reasons there is an inherent limitation of trying to predict a street-level metric with overhead imagery data.
+* The pre-trained ResNet18 model was trained on ImageNet data, which isn't satellite imagery. Future work on this project could include fine-tuning a model specifically built for analyzing patterns in overhead satellite imagery photos.
 
 
 ## General Usage:
@@ -82,12 +82,13 @@ cd deeplearning-walkability-cnn
 pip install -e .
 ```
 
-2. Open notebooks/data_demo.ipynb
-
-3. The dataset located at / can be loaded from:
+2. The dataset located at / can be loaded from:
 /projects/dsci410_510/data/walkability_dataset/
 
-4. Run all cells.
+3. Run notebooks/data_demo.ipynb to load and explore the dataset, or run notebooks/Evaluation.ipynb to predict on the test dataloader with fully trained models.
 
 
+## Data Files:
 
+The Paths on where to find your data on Talapas or github
+The paths to where I can find the weights of your trained model on Talapas or github
