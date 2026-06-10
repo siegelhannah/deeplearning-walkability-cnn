@@ -82,13 +82,11 @@ cd deeplearning-walkability-cnn
 pip install -e .
 ```
 
-2. The dataset located at / can be loaded from:
-/projects/dsci410_510/data/walkability_dataset/
-
-3. Run notebooks/data_demo.ipynb to load and explore the dataset, or run notebooks/Evaluation.ipynb to predict on the test dataloader with fully trained models.
+2. Run notebooks/data_demo.ipynb to load and explore the dataset, or run notebooks/Evaluation.ipynb to predict on the test dataloader with fully trained models.
 
 
 ## Data Files:
 
-The Paths on where to find your data on Talapas or github
-The paths to where I can find the weights of your trained model on Talapas or github
+* The dataset is stored on Talapas at `/projects/dsci410_510/data/walkability_dataset/` or can be re-downloaded via [dataset_download.py](https://github.com/siegelhannah/deeplearning-walkability-cnn/blob/main/walkability/dataset/dataset_download.py)
+* The weights of both trained models are located at []()
+
