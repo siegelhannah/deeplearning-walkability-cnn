@@ -19,6 +19,7 @@ See [data.md](https://github.com/siegelhannah/deeplearning-walkability-cnn/blob/
 The dataset is stored on Talapas at `/projects/dsci410_510/data/walkability_dataset/` or can be re-downloaded via `dataset_download.py`
 
 Example data samples from `data_demo.ipynb`:
+
 ![Data samples](assets/data_demo_patches.png)
 
 
@@ -48,12 +49,27 @@ This project is essentially a 3-class classification problem (low, medium, high 
 
 When trained for 150 epochs with data batch size 32 and all the other model parameters specified above, both models achieved around 55% accuracy on test data (the scratch CNN achieved 0.5523 and the fine-tuned ResNet18 achieved 0.5535).
 
+Training progress:
+
+![Training progress](assets/training_curves_EVAL.png)
+
+
 Confusion matrix:
+
 ![Confusion matrix](assets/confusion_matrices.png)
 
 
 ## Discussion and Limitations
 
+Interestingly, both models achieved similar performance despite one being built from scratch and the other being pre-trained. Both models performed better than random (random accuracy on a 3-class problem = 0.33), but still had relatively low accuracy.
+
+The training curves show accuracy plateauing/converging at this low value, even with increased epochs, suggesting a performance ceiling for this type of classification problem.
+
+The output confusion matrices offer more insight into where the models failed, showing common mis-classifications. Both models, when wrong, tended to predict a higher walkability class than the true class (for example, predicting more "high" than "low" when the true class was "medium"). In fact, the ResNet18 model actually predicted "high" _more_ than "medium" when the true class was "high". This is an interesting bias towards higher walkability predictions, suggesting that the model could have learned from the training data that predicting higher classes was a safer choice. 
+
+There are some limitations of this project, from both the training dataset construction and the model training:
+* First, the NWI data is different for every city, and census block groups/neighborhoods are not always the same size. This results in some cities having many more neighborhoods than others, which I accounted for by capping the neighborhoods per class from each city. However, because neighborhoods can be different sizes and range from densely clustered to large and sprawling, satellite imagery fetched at the centroid coordinates of each neighborhood may not actually be representative of the neighborhood's true features (the fixed size of MapBox satellite images may be bigger or smaller than the neighborhood). Also, walkability is a metric calculated from a combination of features, some of which can't be explicitly determined by overhead satellite imagery alone (e.g., sidewalk quality, distance from transit centers). For these reasons there is an inherent limitation of trying to predict a street-level metric with overhead imagery data.
+* Another training limitation was that the pre-trained ResNet18 model was trained on ImageNet data, which isn't satellite imagery. Future work on this project could include fine-tuning a model specifically built for analyzing patterns in overhead satellite imagery photos.
 
 
 ## General Usage:
