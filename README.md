@@ -88,5 +88,5 @@ pip install -e .
 ## Data Files:
 
 * The dataset is stored on Talapas at `/projects/dsci410_510/data/walkability_dataset/` or can be re-downloaded via [dataset_download.py](https://github.com/siegelhannah/deeplearning-walkability-cnn/blob/main/walkability/dataset/dataset_download.py)
-* The weights of both trained models are located at [lightning_logs/version_44448914](https://github.com/siegelhannah/deeplearning-walkability-cnn/tree/main/walkability/lightning_logs/version_44448914).
+* The weights of both trained models are located at [lightning_logs/version_44448914/checkpoints](https://github.com/siegelhannah/deeplearning-walkability-cnn/tree/main/walkability/lightning_logs/version_44448914/checkpoints).
 
